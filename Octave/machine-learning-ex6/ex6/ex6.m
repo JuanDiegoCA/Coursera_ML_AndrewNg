@@ -105,8 +105,8 @@ C = 1; sigma = 0.1;
 % We set the tolerance and max_passes lower here so that the code will run
 % faster. However, in practice, you will want to run the training to
 % convergence.
-model= svmTrain(X, y, C, @(x1, x2) gaussianKernel(x1, x2, sigma)); 
-visualizeBoundary(X, y, model);
+
+
 
 fprintf('Program paused. Press enter to continue.\n');
 pause;
@@ -133,6 +133,26 @@ pause;
 %  This is a different dataset that you can use to experiment with. Try
 %  different values of C and sigma here.
 % 
+C = [0:01; 0:03; 0:1; 0:3; 1; 3; 10; 30]
+sigma = [0:01; 0:03; 0:1; 0:3; 1; 3; 10; 30]
+bestC = -1
+bestSigma = -1
+minError = 9999999
+
+for c = C
+  for s = sigma
+    model= svmTrain(X, y, c, @(x1, x2) gaussianKernel(x1, x2, s));
+    pred = svmPredict(model,Xval);
+    error = mean(double(pred ~= yval));
+    
+    if error < minError
+      bestC = c;
+      bestSigma = s;
+      minError = error;
+    endif
+    
+  endfor
+endfor
 
 % Load from ex6data3: 
 % You will have X, y in your environment
